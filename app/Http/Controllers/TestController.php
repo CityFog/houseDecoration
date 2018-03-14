@@ -7,10 +7,20 @@
  */
 namespace App\Http\Controllers;
 use App\Customer;
+use redis;
 
 class TestController extends Controller{
     public function hello(){
 
+
+        $redis = new redis();
+        $redis->connect('127.0.0.1',6379);
+        $result = $redis->set('b:bad',119);
+        var_dump($result);
+        echo "<br>";
+        echo $redis->get('b:bad');
+die;
+        phpinfo();die;
 
         $customer = new Customer();
         dd($customer);die;
