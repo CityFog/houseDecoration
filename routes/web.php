@@ -18,3 +18,23 @@ Route::get('/', function () {
 Route::get('test/hello',
     ['uses'=>'TestController@hello']
 );
+
+
+Route::get('index',function(){
+    return view('index', ['name' => 'James']);
+});
+
+Route::get('login',function(){
+    return view('login');
+});
+
+Route::get('customer/login',
+    ['uses'=>'IndexController@login']
+);
+
+
+/*
+Route::get('index',
+    ['uses'=>'IndexController@index']
+);
+*/

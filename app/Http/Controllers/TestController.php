@@ -28,4 +28,13 @@ die;
         print_r( $customer);
 //        return Customer::all();
     }
+    public function login(){
+        $data = [
+            'msg' => '很好',
+            'status' => 1,
+            'data' => []
+        ];
+        echo 123;die;
+        //return json_encode($data);
+    }
 }
