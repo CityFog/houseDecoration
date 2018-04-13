@@ -18,4 +18,9 @@ class Customer extends Model{
       protected function getDateFormat() {
           return time();
       }
+
+
+      /*public function addCustomer(){
+
+      }*/
 }
