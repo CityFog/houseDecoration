@@ -31,7 +31,7 @@
                             <div class="item-inner">
                                 <div class="item-title label">密码</div>
                                 <div class="item-input">
-                                    <input type="password" placeholder="请输入密码" v-model="password">
+                                    <input type="password" placeholder="6到20位之间" v-model="password">
                                 </div>
                             </div>
                         </div>
@@ -63,58 +63,60 @@
 
 
 <script>
-    var userInfo = {
-        username: '',
-        password:'',
-        repeatPassword:''
-    };
-    var vm = new Vue({
-        el: '#register',
-        data: userInfo,
-        methods:{
-            register: function(){
-                if(vm.registerCheck()){
-                    $.showPreloader();
-                    setTimeout(function () {
-                        vm.registerRequest();
-                    }, 500);
-                }
-            },
-            registerCheck:function(){
-                if(userInfo.username.length<3||userInfo.username.length>10){
-                    $.alert('用户名3到20位之间');
-                    return false;
-                }
-                if(!userInfo.password){
-                    $.alert('密码不能为空');
-                    return false;
-                }
-                if(userInfo.password!==userInfo.repeatPassword){
-                    $.alert('两次密码输入不一致');
-                    return false;
-                }
-                return true;
-            },
-            registerRequest: function(){
-                axios.post('/customer/register', userInfo)
-                    .then(function (response) {
-                        $.hidePreloader();
-                        if(response.data.status === 1 ){
-                            $.alert('注册成功',function(){
-                                //$.router.load("/login", true);
-                                location.href='/login';
-                            })
-                        }else if( response.data.status === -1 ){
-                            $.alert(response.data.msg);
-                        }else{
+    window.onload = function(){
+        var userInfo = {
+            username: '',
+            password:'',
+            repeatPassword:''
+        };
+        var vm = new Vue({
+            el: '#register',
+            data: userInfo,
+            methods:{
+                register: function(){
+                    if(vm.registerCheck()){
+                        $.showPreloader();
+                        setTimeout(function () {
+                            vm.registerRequest();
+                        }, 500);
+                    }
+                },
+                registerCheck:function(){
+                    if(userInfo.username.length<3||userInfo.username.length>20){
+                        $.alert('用户名3到20位之间');
+                        return false;
+                    }
+                    if(userInfo.password.length<6||userInfo.password.length>20){
+                        $.alert('密码6到20位之间');
+                        return false;
+                    }
+                    if(userInfo.password!==userInfo.repeatPassword){
+                        $.alert('两次密码输入不一致');
+                        return false;
+                    }
+                    return true;
+                },
+                registerRequest: function(){
+                    axios.post('/customer/register', userInfo)
+                        .then(function (response) {
+                            $.hidePreloader();
+                            if(response.data.status === 1 ){
+                                $.alert('注册成功',function(){
+                                    //$.router.load("/login", true);
+                                    location.href='/login';
+                                })
+                            }else if( response.data.status === -1 ){
+                                $.alert(response.data.msg);
+                            }else{
+                                $.alert('注册失败，请联系管理员')
+                            }
+                        })
+                        .catch(function (error) {
+                            $.hidePreloader();
                             $.alert('注册失败，请联系管理员')
-                        }
-                    })
-                    .catch(function (error) {
-                        $.hidePreloader();
-                        $.alert('注册失败，请联系管理员')
-                    });
+                        });
+                }
             }
-        }
-    });
+        });
+    }
 </script>
