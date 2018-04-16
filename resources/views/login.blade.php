@@ -1,23 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>用户登录</title>
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
-    <link rel="shortcut icon" href="/favicon.ico">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-
-    <link rel="stylesheet" href="SUI-Mobile-publish-0.6.2/dist/css/sm.css">
-    <link rel="stylesheet" href="SUI-Mobile-publish-0.6.2/dist/css/sm-extend.css">
-    <link rel="stylesheet" href="SUI-Mobile-publish-0.6.2/docs/assets/css/demos.css">
-    <link rel="stylesheet" href="css/my.css">
-
-
-
-</head>
-<body>
+@extends('layout')
+@section('content')
 <div class="page-group" id="login">
     <div id="page-layout" class="page page-current">
         <header class="bar bar-nav">
@@ -68,61 +50,57 @@
     </div>
 
 </div>
+@stop
 
-
-
-<script type='text/javascript' src='SUI-Mobile-publish-0.6.2/docs/assets/js/zepto.js' charset='utf-8'></script>
-<script type='text/javascript' src='SUI-Mobile-publish-0.6.2/dist/js/sm.js' charset='utf-8'></script>
-<script type='text/javascript' src='SUI-Mobile-publish-0.6.2/dist/js/sm-extend.js' charset='utf-8'></script>
-
-<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/axios@0.17.1/dist/axios.js"></script>
-
-
-</body>
-</html>
 
 
 <script>
-    var userInfo = {
-        username: '',
-        password:''
-    };
-    var vm = new Vue({
-        el: '#login',
-        data: userInfo,
-        methods:{
-           login: function(){
-               if(vm.loginCheck()){
-                   $.showPreloader();
-                   setTimeout(function () {
-                       vm.loginRequest();
-                   }, 500);
+    window.onload = function(){
+        var userInfo = {
+            username: '',
+            password:''
+        };
+        var vm = new Vue({
+            el: '#login',
+            data: userInfo,
+            methods:{
+               login: function(){
+                   if(vm.loginCheck()){
+                       $.showPreloader();
+                       setTimeout(function () {
+                           vm.loginRequest();
+                       }, 500);
+                   }
+               },
+               loginCheck:function(){
+                   if(!userInfo.username){
+                       $.alert('用户名不能为空');
+                       return false;
+                   }
+                   if(!userInfo.password){
+                       $.alert('密码不能为空');
+                       return false;
+                   }
+                   return true;
+               },
+               loginRequest: function(){
+                   axios.post('/customer/login', userInfo)
+                       .then(function (response) {
+                           $.hidePreloader();
+                           if(response.data.status === 1 ){
+                               $.router.load('test',true);
+                           }else if( response.data.status === -1 ){
+                               $.alert(response.data.msg);
+                           }else{
+                               $.alert('登录失败')
+                           }
+                       })
+                       .catch(function (error) {
+                           $.hidePreloader();
+                           $.alert('登录失败，请联系管理员')
+                       });
                }
-           },
-           loginCheck:function(){
-               if(!userInfo.username){
-                   $.alert('用户名不能为空');
-                   return false;
-               }
-               if(!userInfo.password){
-                   $.alert('密码不能为空');
-                   return false;
-               }
-               return true;
-           },
-           loginRequest: function(){
-               axios.post('/customer/login', userInfo)
-                   .then(function (response) {
-                       if(response.data.status === 1 ){
-                           $.router.load('test',true);
-                       }else if( response.data.status === -1 ){
-                           $.alert(response.data.msg);
-                       }else{
-                           $.alert('登录失败')
-                       }
-                   })
-           }
-        }
-    })
+            }
+        })
+    }
 </script>
