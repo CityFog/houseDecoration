@@ -19,10 +19,14 @@ Route::get('/', function () {
 Route::get('index',function(){
     return view('index', ['name' => 'James']);
 });
-
+/*------------------------------------*/
 Route::get('login',function(){
     return view('login');
 });
+
+Route::match(['get','post'],'customer/login',
+    ['uses'=>'CustomerController@login']
+);
 
 Route::get('register',function(){
     return view('register');
@@ -31,6 +35,9 @@ Route::get('register',function(){
 Route::match(['get','post'],'customer/register',
     ['uses'=>'CustomerController@register']
 );
+/*------------------------------------*/
+
+
 
 Route::match(['get','post'],'test',
     function(){

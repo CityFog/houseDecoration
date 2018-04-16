@@ -10,7 +10,8 @@ namespace Libraries;
 class ResponseFormat {
 
     const STATUS_SUCCESS = 1;
-    const STATUS_FAILED = 1;
+    const STATUS_FAILED = 0;
+    const STATUS_FAILED_INFO = -1;
 
     private static $response = [
         'status' => '',
@@ -28,7 +29,7 @@ class ResponseFormat {
      * @param string $code
      * @return array
      */
-    public static function successFormatData(array $data = [], $msg = '请求成功！', $code = '') {
+    public static function successFormatData($msg = '请求成功！', array $data = [], $code = '') {
         $response = [
             'status' => self::STATUS_SUCCESS,
             'code'   => $code,
@@ -48,9 +49,29 @@ class ResponseFormat {
      * @param string $code
      * @return array
      */
-    public static function failedFormatData(array $data = [], $msg = '请求失败！', $code = '') {
+    public static function failedFormatData($msg = '请求失败！',array $data = [],$code = '') {
         $response = [
             'status' => self::STATUS_FAILED,
+            'code'   => $code,
+            'msg'    => $msg,
+            'data'   => $data
+        ];
+        self::$response = $response;
+        return $response;
+    }
+
+    /**
+     * @date
+     * @description 设置当前失败状态数组，并需要输入失败信息
+     * @author cxh
+     * @param array $data
+     * @param string $msg
+     * @param string $code
+     * @return array
+     */
+    public static function failedFormatDataWithMsg($msg,array $data = [],$code = '') {
+        $response = [
+            'status' => self::STATUS_FAILED_INFO,
             'code'   => $code,
             'msg'    => $msg,
             'data'   => $data
@@ -69,7 +90,7 @@ class ResponseFormat {
      * @param string $code
      * @return array
      */
-    public static function allFormatData(array $data = [], $status, $msg, $code = '') {
+    public static function allFormatData($status, $msg, array $data = [], $code = '') {
         $response = [
             'status' => $status,
             'code'   => $code,

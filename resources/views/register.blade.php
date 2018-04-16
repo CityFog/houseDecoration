@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>我的生活</title>
+    <title>新用户注册</title>
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <link rel="shortcut icon" href="/favicon.ico">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,11 +12,12 @@
     <link rel="stylesheet" href="SUI-Mobile-publish-0.6.2/dist/css/sm.css">
     <link rel="stylesheet" href="SUI-Mobile-publish-0.6.2/dist/css/sm-extend.css">
     <link rel="stylesheet" href="SUI-Mobile-publish-0.6.2/docs/assets/css/demos.css">
+    <link rel="stylesheet" href="css/my.css">
 
 
 </head>
 <body>
-<div class="page-group" id="app">
+<div class="page-group" id="register">
     <div id="page-layout" class="page page-current">
         <header class="bar bar-nav">
             <a class="button button-link button-nav pull-left back">
@@ -36,7 +37,7 @@
                             <div class="item-inner">
                                 <div class="item-title label">用户名</div>
                                 <div class="item-input">
-                                    <input type="text" placeholder="用户名不能超过15位" v-model="username">
+                                    <input type="text" placeholder="3位到20位之间" v-model="username">
                                 </div>
                             </div>
                         </div>
@@ -67,7 +68,7 @@
             </div>
             <div class="content-block">
                 <div class="row">
-                    <div class="col-100"><a href="#" class="button button-big button-fill button-success" v-on:click="login()">注册</a></div>
+                    <div class="col-100"><a href="#" class="button button-big button-fill button-success" v-on:click="register()">注册</a></div>
                 </div>
             </div>
         </div>
@@ -95,19 +96,53 @@
         password:'',
         repeatPassword:''
     };
-    new Vue({
-        el: '#app',
+    var vm = new Vue({
+        el: '#register',
         data: userInfo,
         methods:{
-           login: function(){
-               axios.post('/customer/register', userInfo)
-               .then(function (response) {
-                   console.log(response.data);
-               })
-               .catch(function (error) {
-                   console.log(error);
-               });
-           }
+            register: function(){
+                if(vm.registerCheck()){
+                    $.showPreloader();
+                    setTimeout(function () {
+                        vm.registerRequest();
+                    }, 500);
+                }
+            },
+            registerCheck:function(){
+                if(userInfo.username.length<3||userInfo.username.length>10){
+                    $.alert('用户名3到20位之间');
+                    return false;
+                }
+                if(!userInfo.password){
+                    $.alert('密码不能为空');
+                    return false;
+                }
+                if(userInfo.password!==userInfo.repeatPassword){
+                    $.alert('两次密码输入不一致');
+                    return false;
+                }
+                return true;
+            },
+            registerRequest: function(){
+                axios.post('/customer/register', userInfo)
+                    .then(function (response) {
+                        $.hidePreloader();
+                        if(response.data.status === 1 ){
+                            $.alert('注册成功',function(){
+                                //$.router.load("/login", true);
+                                location.href='/login';
+                            })
+                        }else if( response.data.status === -1 ){
+                            $.alert(response.data.msg);
+                        }else{
+                            $.alert('注册失败，请联系管理员')
+                        }
+                    })
+                    .catch(function (error) {
+                        $.hidePreloader();
+                        $.alert('注册失败，请联系管理员')
+                    });
+            }
         }
-    })
+    });
 </script>
