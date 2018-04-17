@@ -3,7 +3,7 @@
     修改密码
 @stop
 @section('content')
-<div class="page-group" id="register">
+<div class="page-group" id="modify_password">
     <div id="page-layout" class="page page-current">
         <header class="bar bar-nav">
             <a class="button button-link button-nav pull-left back">
@@ -73,7 +73,7 @@
             newPassword:''
         };
         var vm = new Vue({
-            el: '#register',
+            el: '#modify_password',
             data: userInfo,
             mounted: function(){
                 //为了使用vm实例
