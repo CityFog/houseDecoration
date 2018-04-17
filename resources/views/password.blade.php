@@ -1,6 +1,6 @@
 @extends('layout')
 @section('title')
-    注册新用户
+    修改密码
 @stop
 @section('content')
 <div class="page-group" id="register">
@@ -10,7 +10,7 @@
                 <span class="icon icon-left"></span>
                 返回
             </a>
-            <h1 class="title">新用户注册</h1>
+            <h1 class="title">修改密码</h1>
         </header>
         <div class="content native-scroll">
             <div class="list-block">
@@ -21,9 +21,9 @@
                             <div class="item-media">
                                 <i class="icon icon-form-name"></i></div>
                             <div class="item-inner">
-                                <div class="item-title label">用户名</div>
+                                <div class="item-title label">当前用户</div>
                                 <div class="item-input">
-                                    <input type="text" placeholder="3位到20位之间" v-model="username">
+                                    <p v-text="username"></p>
                                 </div>
                             </div>
                         </div>
@@ -32,9 +32,9 @@
                         <div class="item-content">
                             <div class="item-media"><i class="icon icon-form-password "></i></div>
                             <div class="item-inner">
-                                <div class="item-title label">密码</div>
+                                <div class="item-title label">原密码</div>
                                 <div class="item-input">
-                                    <input type="password" placeholder="6到20位之间" v-model="password">
+                                    <input type="password" placeholder="请输入原密码" v-model="oldPassword">
                                 </div>
                             </div>
                         </div>
@@ -43,9 +43,9 @@
                         <div class="item-content">
                             <div class="item-media"><i class="icon icon-form-password"></i></div>
                             <div class="item-inner">
-                                <div class="item-title label">重复密码</div>
+                                <div class="item-title label">新密码</div>
                                 <div class="item-input">
-                                    <input type="password" placeholder="请再次输入密码" v-model="repeatPassword">
+                                    <input type="password" placeholder="6到20位之间" v-model="newPassword">
                                 </div>
                             </div>
                         </div>
@@ -54,7 +54,7 @@
             </div>
             <div class="content-block">
                 <div class="row">
-                    <div class="col-100"><a href="#" class="button button-big button-fill button-success" v-on:click="register()">注册</a></div>
+                    <div class="col-100"><a href="#" class="button button-big button-fill button-success" v-on:click="modifyPassword()">确认修改</a></div>
                 </div>
             </div>
         </div>
@@ -69,54 +69,54 @@
     window.onload = function(){
         var userInfo = {
             username: '',
-            password:'',
-            repeatPassword:''
+            oldPassword:'',
+            newPassword:''
         };
         var vm = new Vue({
             el: '#register',
             data: userInfo,
+            mounted: function(){
+                this.$nextTick(function(){
+                    vm.initData();
+                })
+            },
             methods:{
-                register: function(){
-                    if(vm.registerCheck()){
+                initData: function(){
+
+                },
+                modifyPassword: function(){
+                    if(vm.modifyPasswordCheck()){
                         $.showPreloader();
                         setTimeout(function () {
-                            vm.registerRequest();
+                            vm.modifyPasswordRequest();
                         }, 500);
                     }
                 },
-                registerCheck:function(){
-                    if(userInfo.username.length<3||userInfo.username.length>20){
-                        $.alert('用户名3到20位之间');
-                        return false;
-                    }
-                    if(userInfo.password.length<6||userInfo.password.length>20){
-                        $.alert('密码6到20位之间');
-                        return false;
-                    }
-                    if(userInfo.password!==userInfo.repeatPassword){
-                        $.alert('两次密码输入不一致');
+                modifyPasswordCheck:function(){
+                    if(userInfo.newPassword.length<6||userInfo.newPassword.length>20){
+                        $.alert('新密码6到20位之间');
                         return false;
                     }
                     return true;
                 },
-                registerRequest: function(){
-                    axios.post('/customer/register', userInfo)
+                modifyPasswordRequest: function(){
+                    axios.post('/customer/password', userInfo)
                         .then(function (response) {
                             $.hidePreloader();
                             if(response.data.status === 1 ){
-                                $.alert('注册成功',function(){
+                                $.alert('修改成功',function(){
                                     //$.router.load("/login", true);
-                                    location.href='/login';
+                                    //location.href='/login';
                                 })
                             }else if( response.data.status === -1 ){
                                 $.alert(response.data.msg);
                             }else{
-                                $.alert('注册失败，请联系管理员')
+                                $.alert('修改失败2，请联系管理员')
                             }
                         })
                         .catch(function (error) {
                             $.hidePreloader();
-                            $.alert('注册失败，请联系管理员')
+                            $.alert('修改失败，请联系管理员')
                         });
                 }
             }

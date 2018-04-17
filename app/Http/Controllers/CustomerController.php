@@ -8,7 +8,6 @@
 
 namespace App\Http\Controllers;
 use App\Customer;
-use http\Env\Response;
 use Illuminate\Http\Request;
 use Libraries\ResponseFormat;
 class CustomerController extends Controller {
@@ -50,7 +49,6 @@ class CustomerController extends Controller {
     public function login(Request $request){
         $username = $request->input('username');
         $password = md5($request->input('password'));
-
         $where = [
             'username' => $username,
             'status' => 1
@@ -70,14 +68,17 @@ class CustomerController extends Controller {
                 $loginIp = $request->getClientIp();
                 $loginTime = time();
 
-                $_SESSION['user_id'] = $userInfo['id'];
-                $_SESSION['username'] = $userInfo['username'];
-                $_SESSION['mail'] = $userInfo['mail'];
-                $_SESSION['qq'] = $userInfo['qq'];
-                $_SESSION['current_login_ip'] = $loginIp;
-                $_SESSION['current_login_time'] = $loginTime;
-                $_SESSION['login_count'] = $userInfo['login_count'];
-
+                $session = [
+                    'user_id'=>$userInfo['id'],
+                    'username'=>$userInfo['username'],
+                    'password'=>$userInfo['password'],
+                    'mail'=>$userInfo['mail'],
+                    'qq'=>$userInfo['qq'],
+                    'current_login_ip'=>$loginIp,
+                    'current_login_time'=>$loginTime,
+                    'login_count'=>$userInfo['login_count'],
+                ];
+                $request->session()->put($session);
                 $customer->last_login_ip = $userInfo['current_login_ip'];
                 $customer->last_login_time = $userInfo['current_login_time'];
                 $customer->current_login_ip = $loginIp;
@@ -87,6 +88,30 @@ class CustomerController extends Controller {
                 $response = ResponseFormat::successFormatData();
             }else{
                 $response = ResponseFormat::failedFormatDataWithMsg('密码不正确');
+            }
+        }
+        return response()->json($response);
+    }
+
+
+
+    public function password(Request $request){
+        $username = session('username');
+        $oldPassword = md5($request->input('oldPassword'));
+        $newPassword = md5($request->input('newPassword'));
+        if($oldPassword!==$request->session()->get('password')){
+            $response = ResponseFormat::failedFormatDataWithMsg('原密码不正确');
+        }else{
+            $where = [
+                'username' => $username,
+                'password' => $oldPassword
+            ];
+            $result = Customer::where($where)->update(['password'=>$newPassword]);
+            if($result){
+                $request->session()->put('password',$newPassword);
+                $response = ResponseFormat::successFormatData();
+            }else{
+                $response = ResponseFormat::failedFormatData();
             }
         }
         return response()->json($response);
