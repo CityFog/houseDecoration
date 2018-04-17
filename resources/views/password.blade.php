@@ -54,7 +54,7 @@
             </div>
             <div class="content-block">
                 <div class="row">
-                    <div class="col-100"><a href="#" class="button button-big button-fill button-success" v-on:click="modifyPassword()">确认修改</a></div>
+                    <div class="col-100"><a href="#" class="button button-big button-fill button-warning" v-on:click="modifyPassword()">确认修改</a></div>
                 </div>
             </div>
         </div>
@@ -76,25 +76,22 @@
             el: '#register',
             data: userInfo,
             mounted: function(){
+                //为了使用vm实例
                 this.$nextTick(function(){
                     vm.initData();
                 })
             },
             methods:{
                 initData: function(){
+                    {{--获取用户基本信息--}}
                     axios.post('/customer/getCustomerInfo')
                         .then(function (response) {
                             if(response.data.status === 1 ){
-                                userInfo.username = 55
-                            }else if( response.data.status === -1 ){
-                                $.alert(response.data.msg);
-                            }else{
-                                $.alert('修改失败2，请联系管理员')
+                                userInfo.username = response.data.data.username;
+                            }else {
+                                location.href='/login';
                             }
                         })
-                        .catch(function (error) {
-                            $.alert('修改失败，请联系管理员')
-                        });
                 },
                 modifyPassword: function(){
                     if(vm.modifyPasswordCheck()){
@@ -117,13 +114,13 @@
                             $.hidePreloader();
                             if(response.data.status === 1 ){
                                 $.alert('修改成功',function(){
-                                    //$.router.load("/login", true);
-                                    //location.href='/login';
+                                    userInfo.oldPassword = '';
+                                    userInfo.newPassword = '';
                                 })
                             }else if( response.data.status === -1 ){
                                 $.alert(response.data.msg);
                             }else{
-                                $.alert('修改失败2，请联系管理员')
+                                $.alert('修改失败，请联系管理员')
                             }
                         })
                         .catch(function (error) {

@@ -102,22 +102,26 @@ class CustomerController extends Controller {
      * @return \Illuminate\Http\JsonResponse
      */
     public function password(Request $request){
-        $username = session('username');
-        $oldPassword = md5($request->input('oldPassword'));
-        $newPassword = md5($request->input('newPassword'));
-        if($oldPassword!==$request->session()->get('password')){
-            $response = ResponseFormat::failedFormatDataWithMsg('原密码不正确');
+        $userId = $request->session()->get('user_id');
+        if(!$userId){
+            $response = ResponseFormat::failedFormatDataWithMsg('用户未登录');
         }else{
-            $where = [
-                'username' => $username,
-                'password' => $oldPassword
-            ];
-            $result = Customer::where($where)->update(['password'=>$newPassword]);
-            if($result){
-                $request->session()->put('password',$newPassword);
-                $response = ResponseFormat::successFormatData();
+            $oldPassword = md5($request->input('oldPassword'));
+            $newPassword = md5($request->input('newPassword'));
+            if($oldPassword!==$request->session()->get('password')){
+                $response = ResponseFormat::failedFormatDataWithMsg('原密码不正确');
             }else{
-                $response = ResponseFormat::failedFormatData();
+                $where = [
+                    'id' => $userId,
+                    'password' => $oldPassword
+                ];
+                $result = Customer::where($where)->update(['password'=>$newPassword]);
+                if($result){
+                    $request->session()->put('password',$newPassword);
+                    $response = ResponseFormat::successFormatData();
+                }else{
+                    $response = ResponseFormat::failedFormatData();
+                }
             }
         }
         return response()->json($response);
@@ -125,21 +129,14 @@ class CustomerController extends Controller {
 
 
     public function getCustomerInfo(Request $request){
-        $userId = $request->session()->get('user_id');
-        if(!$userId){
+        $session = $request->session()->all();
+        if(!$session['user_id']){
             $response = ResponseFormat::failedFormatDataWithMsg('用户未登录');
         }else{
-            $where = [
-                'id' => $userId,
-                'status' => 1
-            ];
-            $customer = Customer::where($where)->first();
-            if(!$customer){
-                $response = ResponseFormat::failedFormatDataWithMsg('该用户不存在');
-            }else{
-                $data['username'] = $customer['username']
-                $response = ResponseFormat::successFormatData($customer);
-            }
+            $data['username']  = $session['username'];
+            $data['qq']  = $session['qq'];
+            $data['mail']  = $session['mail'];
+            $response = ResponseFormat::successFormatData($data);
         }
         return $response;
     }
