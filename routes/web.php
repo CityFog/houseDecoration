@@ -56,6 +56,9 @@ Route::match(['get','post'],'customer/password',
     ['uses'=>'CustomerController@password']
 );
 
+Route::match(['post'],'customer/getCustomerInfo',
+    ['uses'=>'CustomerController@getCustomerInfo']
+);
 
 /*------------------------------------*/
 
