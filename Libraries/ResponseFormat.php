@@ -29,7 +29,7 @@ class ResponseFormat {
      * @param string $code
      * @return array
      */
-    public static function successFormatData($msg = '请求成功！', array $data = [], $code = '') {
+    public static function successFormatData(array $data = [], $msg = '请求成功！',  $code = '') {
         $response = [
             'status' => self::STATUS_SUCCESS,
             'code'   => $code,
@@ -49,7 +49,7 @@ class ResponseFormat {
      * @param string $code
      * @return array
      */
-    public static function failedFormatData($msg = '请求失败！',array $data = [],$code = '') {
+    public static function failedFormatData(array $data = [],$msg = '请求失败！',$code = '') {
         $response = [
             'status' => self::STATUS_FAILED,
             'code'   => $code,

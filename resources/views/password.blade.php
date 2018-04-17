@@ -82,7 +82,19 @@
             },
             methods:{
                 initData: function(){
-
+                    axios.post('/customer/getCustomerInfo')
+                        .then(function (response) {
+                            if(response.data.status === 1 ){
+                                userInfo.username =
+                            }else if( response.data.status === -1 ){
+                                $.alert(response.data.msg);
+                            }else{
+                                $.alert('修改失败2，请联系管理员')
+                            }
+                        })
+                        .catch(function (error) {
+                            $.alert('修改失败，请联系管理员')
+                        });
                 },
                 modifyPassword: function(){
                     if(vm.modifyPasswordCheck()){

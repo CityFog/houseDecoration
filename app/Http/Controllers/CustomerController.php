@@ -94,7 +94,13 @@ class CustomerController extends Controller {
     }
 
 
-
+    /**
+     * @date
+     * @description 修改密码
+     * @author cxh
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function password(Request $request){
         $username = session('username');
         $oldPassword = md5($request->input('oldPassword'));
@@ -116,4 +122,45 @@ class CustomerController extends Controller {
         }
         return response()->json($response);
     }
+
+
+    public function getCustomerInfo(Request $request){
+        $userId = $request->session()->get('user_id');
+        if(!$userId){
+            $response = ResponseFormat::failedFormatDataWithMsg('用户未登录');
+        }else{
+            $where = [
+                'id' => $userId,
+                'status' => 1
+            ];
+            $customer = Customer::where($where)->first();
+            if(!$customer){
+                $response = ResponseFormat::failedFormatDataWithMsg('该用户不存在');
+            }else{
+                $data['username'] = $customer['username']
+                $response = ResponseFormat::successFormatData($customer);
+            }
+        }
+        return $response;
+    }
+
+    /*public function getCustomerInfo(Request $request){
+        $userId = $request->session()->get('user_id');
+        if(!$userId){
+            $response = ResponseFormat::failedFormatDataWithMsg('用户未登录');
+        }else{
+            $where = [
+                'id' => $userId,
+                'status' => 1
+            ];
+            $customer = Customer::where($where)->first();
+            if(!$customer){
+                $response = ResponseFormat::failedFormatDataWithMsg('该用户不存在');
+            }else{
+                $data['username'] = $customer['username']
+                $response = ResponseFormat::successFormatData($customer);
+            }
+        }
+        return $response;
+    }*/
 }
