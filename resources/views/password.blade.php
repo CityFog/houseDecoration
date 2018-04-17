@@ -85,7 +85,7 @@
                     axios.post('/customer/getCustomerInfo')
                         .then(function (response) {
                             if(response.data.status === 1 ){
-                                userInfo.username =
+                                userInfo.username = 55
                             }else if( response.data.status === -1 ){
                                 $.alert(response.data.msg);
                             }else{
