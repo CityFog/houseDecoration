@@ -20,21 +20,43 @@ Route::get('index',function(){
     return view('index', ['name' => 'James']);
 });
 /*------------------------------------*/
+Route::get('index',function(){
+    return view('index');
+});
+
+
+Route::get('register',function(){
+    return view('register');
+});
+
+
 Route::get('login',function(){
     return view('login');
+});
+
+
+Route::get('account',function(){
+    return view('account');
+});
+
+Route::get('password',function(){
+    return view('password');
 });
 
 Route::match(['get','post'],'customer/login',
     ['uses'=>'CustomerController@login']
 );
 
-Route::get('register',function(){
-    return view('register');
-});
 
 Route::match(['get','post'],'customer/register',
     ['uses'=>'CustomerController@register']
 );
+
+Route::match(['get','post'],'customer/password',
+    ['uses'=>'CustomerController@password']
+);
+
+
 /*------------------------------------*/
 
 

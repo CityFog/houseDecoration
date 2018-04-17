@@ -24,7 +24,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios@0.17.1/dist/axios.js"></script>
-
+<script>$.init()</script>
 
 </body>
 </html>

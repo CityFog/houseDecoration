@@ -1,6 +1,6 @@
 @extends('layout')
 @section('title')
-    用户登录
+    账户设置
 @stop
 @section('content')
 <div class="page-group" id="login">
@@ -10,7 +10,7 @@
                 <span class="icon icon-left"></span>
                 返回
             </a>
-            <h1 class="title">用户登录</h1>
+            <h1 class="title">账户设置</h1>
         </header>
         <div class="content native-scroll">
             <div class="list-block">
