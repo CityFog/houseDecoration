@@ -60,6 +60,10 @@ Route::match(['post'],'customer/getCustomerInfo',
     ['uses'=>'CustomerController@getCustomerInfo']
 );
 
+Route::match(['get','post'],'customer/logout',
+    ['uses'=>'CustomerController@logout']
+);
+
 
 /*------------------------------------*/
 

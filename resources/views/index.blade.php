@@ -46,6 +46,9 @@
             <h4>QQ：@{{qq}}</h4>
             <h4>邮箱：@{{mail}}</h4>
             <p><a href="/password" class="close-panel">修改密码</a></p>
+            <template v-if="username">
+            <p><a href="#" class="close-panel" v-on:click="logout">退出登录</a></p>
+            </template>
             <!-- Click on link with "close-panel" class will close panel -->
         </div>
     </div>
@@ -79,45 +82,21 @@
                                 userInfo.qq = response.data.data.qq;
                                 userInfo.mail = response.data.data.mail;
                             }else {
-                                location.href='/login';
+                                //location.href='/login';
                             }
                         })
                 },
-                modifyPassword: function(){
-                    if(vm.modifyPasswordCheck()){
-                        $.showPreloader();
-                        setTimeout(function () {
-                            vm.modifyPasswordRequest();
-                        }, 500);
-                    }
-                },
-                modifyPasswordCheck:function(){
-                    if(userInfo.newPassword.length<6||userInfo.newPassword.length>20){
-                        $.alert('新密码6到20位之间');
-                        return false;
-                    }
-                    return true;
-                },
-                modifyPasswordRequest: function(){
-                    axios.post('/customer/password', userInfo)
+                logout:function(){
+                    axios.post('/customer/logout')
                         .then(function (response) {
-                            $.hidePreloader();
-                            if(response.data.status === 1 ){
-                                $.alert('修改成功',function(){
-                                    userInfo.oldPassword = '';
-                                    userInfo.newPassword = '';
-                                })
-                            }else if( response.data.status === -1 ){
-                                $.alert(response.data.msg);
-                            }else{
-                                $.alert('修改失败，请联系管理员')
-                            }
+                            location.reload();
                         })
-                        .catch(function (error) {
-                            $.hidePreloader();
-                            $.alert('修改失败，请联系管理员')
-                        });
+                        .catch(function(){
+                            location.reload();
+                        })
                 }
+
+
             }
         });
     }

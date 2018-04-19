@@ -130,7 +130,7 @@ class CustomerController extends Controller {
 
     public function getCustomerInfo(Request $request){
         $session = $request->session()->all();
-        if(!$session['user_id']){
+        if(!isset($session['user_id'])||!$session['user_id']){
             $response = ResponseFormat::failedFormatDataWithMsg('用户未登录');
         }else{
             $data['username']  = $session['username'];
@@ -139,6 +139,22 @@ class CustomerController extends Controller {
             $response = ResponseFormat::successFormatData($data);
         }
         return $response;
+    }
+
+    public function logout(Request $request){
+        $this->destroyUserInfoSession($request);
+        return ResponseFormat::successFormatData();
+    }
+
+    public function destroyUserInfoSession(Request $request){
+        $request->session()->forget('user_id');
+        $request->session()->forget('username');
+        $request->session()->forget('password');
+        $request->session()->forget('mail');
+        $request->session()->forget('qq');
+        $request->session()->forget('current_login_ip');
+        $request->session()->forget('current_login_time');
+        $request->session()->forget('login_count');
     }
 
     /*public function getCustomerInfo(Request $request){
